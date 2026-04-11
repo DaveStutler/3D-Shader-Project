@@ -41,6 +41,7 @@ public class VolumeGenerator : MonoBehaviour
 
                     float finalDensity = noiseValue * mask * densityMultiplier;
 
+
                     int idx = x + y * resolution + z * resolution * resolution;
                     colors[idx] = new Color(finalDensity, 0, 0, 0);
                 }

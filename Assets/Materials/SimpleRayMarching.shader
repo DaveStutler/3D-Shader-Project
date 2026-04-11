@@ -2,7 +2,7 @@ Shader "Custom/SimpleRayMarching"
 {
     Properties
     {
-        _VolumeTex ("Volume Texture (3D)", 3D) = "white" {}
+        _MainVoxelTex ("Volume Texture (3D)", 3D) = "white" {}
         _StepSize ("Step Size", Range(0.01, 0.1)) = 0.02
         _DensityScale ("Density Scale", Range(0, 100)) = 20.0
         _SmokeColor ("Smoke Color", Color) = (0.8, 0.8, 0.8, 1)
@@ -36,7 +36,7 @@ Shader "Custom/SimpleRayMarching"
                 float3 objectCamPos : TEXCOORD1; 
             };
 
-            sampler3D _VolumeTex;
+            sampler3D _MainVoxelTex;
             float _StepSize;
             float _DensityScale;
             float4 _SmokeColor;
@@ -97,7 +97,7 @@ Shader "Custom/SimpleRayMarching"
                     
                     float3 uvw = currentPos + float3(0.5, 0.5, 0.5);
                     
-                    float rawDensity = tex3D(_VolumeTex, uvw).r;
+                    float rawDensity = tex3D(_MainVoxelTex, uvw).r;
 
                     float shapedDensity = smoothstep(0.1, 0.3, rawDensity); 
 
