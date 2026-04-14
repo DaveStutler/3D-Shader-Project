@@ -21,7 +21,7 @@ public class SmokeGrid : MonoBehaviour
     [SerializeField] private SmokeRenderer smokeRenderer;
     [SerializeField] private Material material;
 
-    void Start()
+    void Awake()
     {
         mainVoxelGrid.spaceScale = spaceScale;
         physicsVoxelGrid.spaceScale = spaceScale;
@@ -75,7 +75,7 @@ public class SmokeGrid : MonoBehaviour
 
     void Update()
     {
-        
+
     }
 
     private void OnDrawGizmos()
@@ -103,7 +103,7 @@ public class SmokeGrid : MonoBehaviour
         }
         catch
         {
-            return; 
+            return;
         }
 
         int startZ = 0;
@@ -111,10 +111,10 @@ public class SmokeGrid : MonoBehaviour
 
 
         float voxelHeight = spaceScale.y / resY;
-        float maxVisualLength = voxelHeight * 0.5f; 
+        float maxVisualLength = voxelHeight * 0.5f;
 
-        float maxExpectedDensity = densityMulptiplier; 
-        float velocityVisualScale = 1.0f; 
+        float maxExpectedDensity = densityMulptiplier;
+        float velocityVisualScale = 1.0f;
 
         for (int z = startZ; z < endZ; z++)
         {

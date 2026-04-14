@@ -407,6 +407,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: SmokeGrid
       objectReference: {fileID: 0}
+    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
+      propertyPath: localGrowthRatio
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
+      propertyPath: growStageDuration
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
