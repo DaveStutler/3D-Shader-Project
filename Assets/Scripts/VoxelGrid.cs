@@ -45,7 +45,7 @@ public class VoxelGrid : MonoBehaviour
 
         mainGrid = new Texture3D(_resolution_x, _resolution_y, _resolution_z, mainGridTexFormat, false);
         mainGrid.wrapMode = TextureWrapMode.Clamp;
-        mainGrid.filterMode = FilterMode.Bilinear;
+        mainGrid.filterMode = FilterMode.Trilinear;
     }
 
     public Vector3 GetGridPosition(int x, int y, int z)
