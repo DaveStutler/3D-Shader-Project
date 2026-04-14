@@ -12,7 +12,7 @@ public class SmokeUpdater : MonoBehaviour
 
     void Update()
     {
-        RandomWalk();
+        // RandomWalk();
     }
 
     void RandomWalk()
