@@ -118,14 +118,14 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _EdgeMax: 0.588
-    - _EdgeMin: 0.2
+    - _EdgeMax: 0.6
+    - _EdgeMin: 0.1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _HG_G: 0.4
-    - _LightAbsorption: 2.5
+    - _LightAbsorption: 1
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005

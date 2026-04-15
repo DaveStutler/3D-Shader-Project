@@ -29,6 +29,7 @@ Shader "Custom/URP_RaymarchingSmoke"
         LOD 100
         
         ZWrite Off
+        ZTest Always
         Blend SrcAlpha OneMinusSrcAlpha
         Cull Front
 
@@ -43,6 +44,7 @@ Shader "Custom/URP_RaymarchingSmoke"
             
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
 
             struct Attributes
             {
@@ -53,6 +55,7 @@ Shader "Custom/URP_RaymarchingSmoke"
             {
                 float4 positionCS : SV_POSITION;
                 float3 positionOS : TEXCOORD0;
+                float4 screenPos  : TEXCOORD1;
             };
 
             TEXTURE3D(_MainVoxelTex);
@@ -97,20 +100,34 @@ Shader "Custom/URP_RaymarchingSmoke"
                 Varyings output;
                 output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
                 output.positionOS = input.positionOS.xyz;
+                output.screenPos = ComputeScreenPos(output.positionCS);
                 return output;
             }
 
             half4 frag (Varyings input) : SV_Target
             {
-                float3 cameraPosWS = GetCameraPositionWS();
-                float3 cameraPosOS = TransformWorldToObject(cameraPosWS);
+                float3 cameraPosWordlSpace = GetCameraPositionWS();
+                float3 cameraPosObjectSpace = TransformWorldToObject(cameraPosWordlSpace);
 
-                float3 rayDirOS = normalize(input.positionOS - cameraPosOS);
-                float2 hitInfo = IntersectAABB(cameraPosOS, rayDirOS);
+                float3 rayDirOS = normalize(input.positionOS - cameraPosObjectSpace);
+                float2 hitInfo = IntersectAABB(cameraPosObjectSpace, rayDirOS);
                 
                 if (hitInfo.y <= 0.0) return half4(0,0,0,0);
+
+                float2 screenUV = input.screenPos.xy / input.screenPos.w;
+                float rawDepth = SampleSceneDepth(screenUV);
+                float3 scenePosWordlSpace = ComputeWorldSpacePosition(screenUV, rawDepth, UNITY_MATRIX_I_VP);
+                float3 scenePosObjectSpace = TransformWorldToObject(scenePosWordlSpace);
+
+                float maxDistOS = length(scenePosObjectSpace - cameraPosObjectSpace);
+
+                float maxTravelInsideBox = maxDistOS - hitInfo.x;
+
+                hitInfo.y = min(hitInfo.y, maxTravelInsideBox);
+
+                if (hitInfo.y <= 0.0) return half4(0,0,0,0);
                 
-                float3 rayOrigin = cameraPosOS + rayDirOS * hitInfo.x;
+                float3 rayOrigin = cameraPosObjectSpace + rayDirOS * hitInfo.x;
                 
                 Light mainLight = GetMainLight();
                 float3 lightDirWS = mainLight.direction;

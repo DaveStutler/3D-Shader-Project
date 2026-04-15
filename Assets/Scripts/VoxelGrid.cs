@@ -13,7 +13,6 @@ public class VoxelGrid : MonoBehaviour
 
     public Vector3Int resolution = new Vector3Int(32, 32, 32);
 
-    // default 1 means the grid is filled with 1 * 1 * 1 space;
     public Vector3 spaceScale = new Vector3(10f, 10f, 10f);
 
     public bool isStatic = true;
@@ -69,6 +68,11 @@ public class VoxelGrid : MonoBehaviour
             + (x + 0.5f) / (float)resX * transform.right * spaceScale.x
             + (y + 0.5f) / (float)resY * transform.up * spaceScale.y
             + (z + 0.5f) / (float)resZ * transform.forward * spaceScale.z;
+    }
+
+    public Vector3 GetGridSize()
+    {
+        return new Vector3(spaceScale.x / resolution.x, spaceScale.y / resolution.y, spaceScale.z / resolution.z);
     }
 
     private void OnDrawGizmos()
