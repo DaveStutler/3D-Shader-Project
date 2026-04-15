@@ -8,14 +8,19 @@ public class CollisionMasker : MonoBehaviour
     public int CollisionResoltion = 64;
     public LayerMask obstacleLayer;
 
-
     private VoxelGrid _mainGridRef;
+    private VoxelGrid _collisionVoxelGrid;
 
     public void initialize(VoxelGrid gridRef)
     {
         _mainGridRef = gridRef;
 
         ExecuteDetection();
+    }
+
+    public VoxelGrid GetCollisionVoxel()
+    {
+        return _collisionVoxelGrid;
     }
 
     void ExecuteDetection()
@@ -95,11 +100,11 @@ public class CollisionMasker : MonoBehaviour
         }
 
 
-        Texture3D mask = TriLerp2Voxelmask(lookup_tables[max_layer - 1], (int)Mathf.Pow(2, max_layer));
+        TriLerp2Voxelmask(lookup_tables[max_layer - 1], (int)Mathf.Pow(2, max_layer));
     }
 
     // currently in cpu but the lerp will be done by gpu itself in shader
-    Texture3D TriLerp2Voxelmask(bool[] lookupTable, int resolution)
+    void TriLerp2Voxelmask(bool[] lookupTable, int resolution)
     {
         Vector3Int targetRes = _mainGridRef.resolution;
 
@@ -122,14 +127,16 @@ public class CollisionMasker : MonoBehaviour
             }
         }
 
-        Texture3D collisionMask = new Texture3D(targetRes.x, targetRes.y, targetRes.z, TextureFormat.R8, false);
-        collisionMask.wrapMode = TextureWrapMode.Clamp;
-        collisionMask.filterMode = FilterMode.Point;
+        _collisionVoxelGrid = gameObject.AddComponent<VoxelGrid>();
+        _collisionVoxelGrid.resolution = _mainGridRef.resolution;
+        _collisionVoxelGrid.spaceScale = _mainGridRef.spaceScale;
 
-        collisionMask.SetPixels(colors);
-        collisionMask.Apply();
+        _collisionVoxelGrid.mainGrid = new Texture3D(targetRes.x, targetRes.y, targetRes.z, TextureFormat.R8, false);
+        _collisionVoxelGrid.mainGrid.wrapMode = TextureWrapMode.Clamp;
+        _collisionVoxelGrid.mainGrid.filterMode = FilterMode.Point;
 
-        return collisionMask;
+        _collisionVoxelGrid.mainGrid.SetPixels(colors);
+        _collisionVoxelGrid.mainGrid.Apply();
     }
 
     void Start()

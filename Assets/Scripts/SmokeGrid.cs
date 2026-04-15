@@ -15,25 +15,39 @@ public class SmokeGrid : MonoBehaviour
     public bool showGizmos = true;
     public bool drawOnlyBounds = true;
 
+
+    [Header("Reference")]
     [SerializeField] private VoxelGrid mainVoxelGrid;
-    [SerializeField] private VoxelGrid physicsVoxelGrid;
+    [SerializeField] private CollisionMasker collisionMasker;
 
     [SerializeField] private SmokeRenderer smokeRenderer;
     [SerializeField] private Material material;
 
+    [SerializeField] private DebugVoxelGrid debugVoxelGrid;
+
     void Awake()
     {
         mainVoxelGrid.spaceScale = spaceScale;
-        physicsVoxelGrid.spaceScale = spaceScale;
 
         mainVoxelGrid.initGrid();
-        physicsVoxelGrid.initGrid();
         smokeRenderer.Init(transform.position, transform.rotation, spaceScale);
+
+        collisionMasker = GetComponent<CollisionMasker>();
 
         // just for example
         GenerateSample();
         smokeRenderer.SetMaterial(material);
         smokeRenderer.SetMainVoxelGrid(mainVoxelGrid.mainGrid);
+    }
+
+    private void Start()
+    {
+        collisionMasker.initialize(mainVoxelGrid);
+
+        _smokeupdater.CollisionVoxelGrid = collisionMasker.GetCollisionVoxel();
+        _smokeupdater.initializePixels();
+
+        debugVoxelGrid.initialize();
     }
 
     void GenerateSample(float noiseScale = 0.2f)
@@ -76,6 +90,11 @@ public class SmokeGrid : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public VoxelGrid GetMainGrid()
+    {
+        return mainVoxelGrid;
     }
 
     private void OnDrawGizmos()

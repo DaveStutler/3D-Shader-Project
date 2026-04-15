@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3787044014051382812}
   - component: {fileID: 7310955639063347523}
   - component: {fileID: 3766462762712591354}
+  - component: {fileID: 4460718124439866875}
   m_Layer: 0
   m_Name: SmokeGrid
   m_TagString: Untagged
@@ -54,9 +55,10 @@ MonoBehaviour:
   showGizmos: 1
   drawOnlyBounds: 0
   mainVoxelGrid: {fileID: 5393161750105029590}
-  physicsVoxelGrid: {fileID: 4547452709689726266}
+  collisionMasker: {fileID: 0}
   smokeRenderer: {fileID: 5729090615293513495}
   material: {fileID: 2100000, guid: 6b9553ac194293c47b18a1988b28a951, type: 2}
+  debugVoxelGrid: {fileID: 0}
 --- !u!114 &3766462762712591354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69,7 +71,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edea4cf652401e44d9afca503706440c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SmokeUpdater
+  densityThreshold: 0.0001
+  minDensityDelta: -0.3
+  maxDensityDelta: 0
+  minDensity: 0
+  maxDensity: 5
+  growStageDuration: 1
+  maxCloudRadius: 5
+  localGrowthRatio: 0.5
   MainVoxelGrid: {fileID: 5393161750105029590}
+  CollisionVoxelGrid: {fileID: 0}
+--- !u!114 &4460718124439866875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3475284812560810114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 209aa625f7cff6a4aba4b8631655712f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CollisionMasker
+  CollisionResoltion: 64
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &7026366178940792806
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,14 +359,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5939878956605215810, guid: 3cafedba86e0f9d4ba7d186c54ffba0b, type: 3}
   m_PrefabInstance: {fileID: 5105172879408395486}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4547452709689726266 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8773851594663518692, guid: 3cafedba86e0f9d4ba7d186c54ffba0b, type: 3}
-  m_PrefabInstance: {fileID: 5105172879408395486}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e541ae7e4fd039149a243937f047bd41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VoxelGrid
