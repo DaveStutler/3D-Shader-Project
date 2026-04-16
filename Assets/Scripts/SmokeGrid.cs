@@ -45,7 +45,7 @@ public class SmokeGrid : MonoBehaviour
         collisionMasker.initialize(mainVoxelGrid);
 
         _smokeupdater.CollisionVoxelGrid = collisionMasker.GetCollisionVoxel();
-        _smokeupdater.initializePixels();
+        _smokeupdater.InitializePixels();
 
         debugVoxelGrid.initialize();
     }

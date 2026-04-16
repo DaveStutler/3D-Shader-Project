@@ -2,12 +2,13 @@ using UnityEngine;
 
 public class SmokeUpdater : MonoBehaviour
 {
+    [Header("Density Update Settings")]
     [SerializeField] private float densityThreshold = 0.0001f;
     [SerializeField] private float minDensityDelta = -0.3f;
     [SerializeField] private float maxDensityDelta = 0.0f;
     [SerializeField] private float minDensity = 0.0f;
     [SerializeField] private float maxDensity = 5.0f;
-
+    [SerializeField] private float smokeDuration = 5.0f; 
 
     [Header("Growth Settings")]
     [SerializeField] private float growStageDuration = 1.0f;
@@ -27,9 +28,9 @@ public class SmokeUpdater : MonoBehaviour
     public VoxelGrid MainVoxelGrid;
     public VoxelGrid CollisionVoxelGrid;
 
-    public void initializePixels()
+    public void InitializePixels()
     {
-        Debug.Log("[Smoke Updater] Entered initializePixels: " + Time.time);
+        Debug.Log("[Smoke Updater] Entered InitalizePixels: " + Time.time);
 
         // build collision mask
         if (CollisionVoxelGrid != null)
@@ -102,7 +103,7 @@ public class SmokeUpdater : MonoBehaviour
     {
         Debug.Log("[Smoke Updater] Entered Start: " + Time.time);
 
-        // initializePixels();
+        // InitializePixels();
     }
 
     void Update()
@@ -114,16 +115,48 @@ public class SmokeUpdater : MonoBehaviour
         {
             GrowtoInitialSize();
         }
-        else
-        // Stage 2: when the smoke fizzles out
+        // Stage 2: smoke stays relatively steady
+        else if (growStageDuration + smokeDuration > 0f && timeCounter < growStageDuration + smokeDuration)
         {
-            RandomWalk();
+            SteadyStateEvolution();
         }
+        // Stage 3: when the smoke fizzles out
+        else
+        {
+            FizzleOut();
+        }
+        
 
         timeCounter += Time.deltaTime;
     }
 
-    void RandomWalk()
+    void SteadyStateEvolution()
+    {
+        Texture3D grid = MainVoxelGrid.mainGrid;
+
+        for (int i = 0; i < currentPixels.Length; i++)
+        {
+            if (_collisionMask[i])
+            {
+                currentPixels[i] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+                continue;
+            }
+
+            float density = currentPixels[i].r;
+
+            if (density > densityThreshold)
+            {
+                density += Random.Range(0.0f, smokeDuration / 100.0f) * Time.deltaTime;
+            }
+
+            currentPixels[i].r = Mathf.Clamp(density, minDensity, maxDensity);
+        }
+
+        grid.SetPixels(currentPixels);
+        grid.Apply();
+    }
+
+    void FizzleOut()
     {
         Texture3D grid = MainVoxelGrid.mainGrid;
 
@@ -154,6 +187,7 @@ public class SmokeUpdater : MonoBehaviour
         Texture3D grid = MainVoxelGrid.mainGrid;
 
         float globalProgress = Mathf.Clamp01(timeCounter / growStageDuration);
+        globalProgress = Mathf.SmoothStep(0.0f, 1.0f, Mathf.SmoothStep(0.0f, 1.0f, globalProgress));
         float currentWaveRadius = globalProgress * maxCloudRadius;
 
         float localDuration = growStageDuration * localGrowthRatio;
@@ -167,7 +201,7 @@ public class SmokeUpdater : MonoBehaviour
             }
 
             float density = currentPixels[i].r;
-            float initialDensity = initialPixels[i].r;
+            float initialDensity = initialPixels[i].r * 0.60f;
 
             if (density < initialDensity)
             {
