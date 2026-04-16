@@ -22,11 +22,33 @@ public class SmokeUpdater : MonoBehaviour
     private Color[] currentPixels;
     private float[] voxelDistances;
 
-    public VoxelGrid MainVoxelGrid;
+    private bool[] _collisionMask;
 
-    void initializePixels()
+    public VoxelGrid MainVoxelGrid;
+    public VoxelGrid CollisionVoxelGrid;
+
+    public void initializePixels()
     {
         Debug.Log("[Smoke Updater] Entered initializePixels: " + Time.time);
+
+        // build collision mask
+        if (CollisionVoxelGrid != null)
+        {
+            Color[] colors = CollisionVoxelGrid.mainGrid.GetPixels();
+            _collisionMask = new bool[colors.Length];
+            for (int i = 0; i < colors.Length; i++)
+            {
+                if (colors[i].r > 0.1f)
+                {
+                    _collisionMask[i] = true;
+                }
+                else
+                {
+                    _collisionMask[i] = false;
+                }
+            }
+        }
+
 
         if (MainVoxelGrid == null || MainVoxelGrid.mainGrid == null) return;
 
@@ -46,6 +68,12 @@ public class SmokeUpdater : MonoBehaviour
                 for (int x = 0; x < res.x; x++)
                 {
                     int i = x + y * res.x + z * res.y * res.x;
+                    
+                    if (_collisionMask[i])
+                    {
+                        currentPixels[i] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+                        continue;
+                    }
 
                     if (growStageDuration <= 0f)
                     {
@@ -65,6 +93,8 @@ public class SmokeUpdater : MonoBehaviour
         grid.SetPixels(currentPixels);
         grid.Apply();
 
+        timeCounter = 0.0f;
+
         Debug.Log("[Smoke Updater] Successfully initialized pixels and cached distances!");
     }
 
@@ -72,8 +102,7 @@ public class SmokeUpdater : MonoBehaviour
     {
         Debug.Log("[Smoke Updater] Entered Start: " + Time.time);
 
-        initializePixels();
-        timeCounter = 0.0f;
+        // initializePixels();
     }
 
     void Update()
@@ -100,6 +129,12 @@ public class SmokeUpdater : MonoBehaviour
 
         for (int i = 0; i < currentPixels.Length; i++)
         {
+            if (_collisionMask[i])
+            {
+                currentPixels[i] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+                continue;
+            }
+
             float density = currentPixels[i].r;
 
             if (density > densityThreshold)
@@ -125,6 +160,12 @@ public class SmokeUpdater : MonoBehaviour
 
         for (int i = 0; i < currentPixels.Length; i++)
         {
+            if (_collisionMask[i])
+            {
+                currentPixels[i] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+                continue;
+            }
+
             float density = currentPixels[i].r;
             float initialDensity = initialPixels[i].r;
 
@@ -149,5 +190,16 @@ public class SmokeUpdater : MonoBehaviour
 
         grid.SetPixels(currentPixels);
         grid.Apply();
+    }
+
+
+    public bool[] GetCollisionMask()
+    {
+        return _collisionMask;
+    }
+
+    public Color getCurrentDensity(int idx)
+    {
+        return currentPixels[idx];
     }
 }
