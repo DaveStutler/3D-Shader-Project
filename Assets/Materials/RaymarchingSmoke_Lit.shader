@@ -150,7 +150,10 @@ Shader "Custom/URP_RaymarchingSmoke"
                     float3 currentPos = rayOrigin + rayDirOS * distanceTravelled;
                     float3 uvw = currentPos + 0.5;
                     
-                    float rawDensity = SAMPLE_TEXTURE3D_LOD(_MainVoxelTex, sampler_MainVoxelTex, uvw, 0).r;
+                    float4 voxelData = SAMPLE_TEXTURE3D_LOD(_MainVoxelTex, sampler_MainVoxelTex, uvw, 0);
+                    float3 velocity = voxelData.gba;
+                    float3 distortedUVW = uvw - velocity * 0.05; 
+                    float rawDensity = SAMPLE_TEXTURE3D_LOD(_MainVoxelTex, sampler_MainVoxelTex, distortedUVW, 0).r;
                     
                     float shapedDensity = smoothstep(_EdgeMin, _EdgeMax, rawDensity);
                     float density = shapedDensity * _DensityScale;

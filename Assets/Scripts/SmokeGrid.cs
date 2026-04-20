@@ -78,7 +78,7 @@ public class SmokeGrid : MonoBehaviour
                     float finalDensity = noiseValue * mask * densityMulptiplier;
 
                     // give random speed to the grid
-                    Vector3 velocity = Random.insideUnitSphere;
+                    Vector3 velocity = Vector3.zero;
 
                     int idx = x + y * mainVoxelGrid.resolution.x + z * mainVoxelGrid.resolution.y * mainVoxelGrid.resolution.x;
                     colors[idx] = new Color(finalDensity, velocity.x, velocity.y, velocity.z);

@@ -11,7 +11,7 @@ public class VoxelGrid : MonoBehaviour
 
     public List<Texture3D> extraGrid;
 
-    public Vector3Int resolution = new Vector3Int(32, 32, 32);
+    public Vector3Int resolution = new Vector3Int(64, 64, 64);
 
     public Vector3 spaceScale = new Vector3(10f, 10f, 10f);
 
