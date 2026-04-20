@@ -36,6 +36,7 @@ public class CollisionMasker : MonoBehaviour
 
         if (hitObstacles.Length == 0)
         {
+            CreateEmptyVoxel();
             return;
         }
 
@@ -138,6 +139,27 @@ public class CollisionMasker : MonoBehaviour
         _collisionVoxelGrid.mainGrid.SetPixels(colors);
         _collisionVoxelGrid.mainGrid.Apply();
     }
+
+    void CreateEmptyVoxel()
+    {
+        Vector3Int targetRes = _mainGridRef.resolution;
+
+        Color[] colors = new Color[targetRes.x * targetRes.y * targetRes.z];
+
+        for (int x = 0; x < colors.Length; x++) { colors[x] = new Color(); }
+
+        _collisionVoxelGrid = gameObject.AddComponent<VoxelGrid>();
+        _collisionVoxelGrid.resolution = _mainGridRef.resolution;
+        _collisionVoxelGrid.spaceScale = _mainGridRef.spaceScale;
+
+        _collisionVoxelGrid.mainGrid = new Texture3D(targetRes.x, targetRes.y, targetRes.z, TextureFormat.R8, false);
+        _collisionVoxelGrid.mainGrid.wrapMode = TextureWrapMode.Clamp;
+        _collisionVoxelGrid.mainGrid.filterMode = FilterMode.Point;
+
+        _collisionVoxelGrid.mainGrid.SetPixels(colors);
+        _collisionVoxelGrid.mainGrid.Apply();
+    }
+
 
     void Start()
     {

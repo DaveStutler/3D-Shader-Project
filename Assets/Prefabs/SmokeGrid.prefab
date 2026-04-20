@@ -35,6 +35,7 @@ Transform:
   - {fileID: 7022264052253953648}
   - {fileID: 1492811196755992732}
   - {fileID: 3738078767087038927}
+  - {fileID: 1999024898086222831}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7310955639063347523
@@ -55,7 +56,7 @@ MonoBehaviour:
   showGizmos: 1
   drawOnlyBounds: 0
   mainVoxelGrid: {fileID: 5393161750105029590}
-  collisionMasker: {fileID: 0}
+  collisionMasker: {fileID: 4460718124439866875}
   smokeRenderer: {fileID: 5729090615293513495}
   material: {fileID: 2100000, guid: 6b9553ac194293c47b18a1988b28a951, type: 2}
   debugVoxelGrid: {fileID: 0}
@@ -76,6 +77,7 @@ MonoBehaviour:
   maxDensityDelta: 0
   minDensity: 0
   maxDensity: 5
+  smokeDuration: 5
   growStageDuration: 1
   maxCloudRadius: 5
   localGrowthRatio: 0.5
@@ -97,6 +99,57 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 64
+--- !u!1 &4464288979215544310
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1999024898086222831}
+  - component: {fileID: 7269143942438258485}
+  m_Layer: 0
+  m_Name: Debugger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1999024898086222831
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4464288979215544310}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3787044014051382812}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7269143942438258485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4464288979215544310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 801961122a8fea444850e6f968534fdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SmokeSliceDebugger
+  smokeUpdater: {fileID: 3766462762712591354}
+  smokeGrid: {fileID: 7310955639063347523}
+  showDebug: 1
+  sliceAxis: 1
+  sliceIndex: 5
+  maxVisualDensity: 5
+  voxelGapScale: 0.95
 --- !u!1 &7026366178940792806
 GameObject:
   m_ObjectHideFlags: 0

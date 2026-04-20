@@ -35,19 +35,23 @@ public class SmokeGrid : MonoBehaviour
         collisionMasker = GetComponent<CollisionMasker>();
 
         // just for example
-        GenerateSample();
-        smokeRenderer.SetMaterial(material);
-        smokeRenderer.SetMainVoxelGrid(mainVoxelGrid.mainGrid);
     }
 
     private void Start()
     {
+        GenerateSample();
+        smokeRenderer.SetMaterial(material);
+        smokeRenderer.SetMainVoxelGrid(mainVoxelGrid.mainGrid);
+
         collisionMasker.initialize(mainVoxelGrid);
 
         _smokeupdater.CollisionVoxelGrid = collisionMasker.GetCollisionVoxel();
         _smokeupdater.InitializePixels();
 
-        debugVoxelGrid.initialize();
+        if (debugVoxelGrid != null)
+        {
+            debugVoxelGrid.initialize();
+        }
     }
 
     void GenerateSample(float noiseScale = 0.2f)
@@ -69,8 +73,8 @@ public class SmokeGrid : MonoBehaviour
 
                     Vector3 pos = mainVoxelGrid.GetGridPosition(x, y, z);
                     float distToCenter = Vector3.Distance(pos, transform.position);
-                    float mask = Mathf.Clamp01((10.0f - distToCenter * 2.0f) / 10.0f);
-
+                    float maxAllowedRadius = Mathf.Max(spaceScale.x, spaceScale.y, spaceScale.z) * 0.5f;
+                    float mask = Mathf.Clamp01(1.0f - (distToCenter / maxAllowedRadius));
                     float finalDensity = noiseValue * mask * densityMulptiplier;
 
                     // give random speed to the grid
