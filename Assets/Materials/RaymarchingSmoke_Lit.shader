@@ -17,6 +17,13 @@ Shader "Custom/URP_RaymarchingSmoke"
         [Header(Lighting)]
         _LightAbsorption ("Light Absorption", Range(0, 10)) = 2.0
         _HG_G ("Phase Function (g)", Range(-0.99, 0.99)) = 0.4
+        
+        [Header(Dynamics and Details)]
+        _BoilSpeed ("Boiling Speed", Range(0, 10)) = 2.0
+        _BoilStrength ("Boiling Strength", Range(0, 0.1)) = 0.01
+        _DetailScale ("Detail Scale", Range(0, 1)) = 0.5
+        _DetailStrength ("Detail Erosion", Range(0, 1)) = 0.8
+        _WindDirection ("Wind Direction", Vector) = (0.1, 0.5, 0.2, 0)
     }
 
     SubShader
@@ -70,6 +77,11 @@ Shader "Custom/URP_RaymarchingSmoke"
                 float _EdgeMax;
                 float _LightAbsorption;
                 float _HG_G;
+                float _BoilSpeed;
+                float _BoilStrength;
+                float _DetailScale;
+                float _DetailStrength;
+                float4 _WindDirection;
             CBUFFER_END
 
             float HGPhase(float cosTheta, float g)
@@ -102,6 +114,11 @@ Shader "Custom/URP_RaymarchingSmoke"
                 output.positionOS = input.positionOS.xyz;
                 output.screenPos = ComputeScreenPos(output.positionCS);
                 return output;
+            }
+
+            float RandomHash(float2 p)
+            {
+                return frac(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);
             }
 
             half4 frag (Varyings input) : SV_Target
@@ -140,7 +157,11 @@ Shader "Custom/URP_RaymarchingSmoke"
 
                 float transmittance = 1.0;
                 float3 scatteredLight = 0;
-                float distanceTravelled = 0;
+
+                // random start
+                float2 pixelCoords = input.positionCS.xy;
+                float randomValue = RandomHash(pixelCoords);
+                float distanceTravelled = randomValue * _StepSize;
                 
                 [loop]
                 for (int step = 0; step < 64; step++)
@@ -149,13 +170,28 @@ Shader "Custom/URP_RaymarchingSmoke"
                     
                     float3 currentPos = rayOrigin + rayDirOS * distanceTravelled;
                     float3 uvw = currentPos + 0.5;
-                    
-                    float4 voxelData = SAMPLE_TEXTURE3D_LOD(_MainVoxelTex, sampler_MainVoxelTex, uvw, 0);
-                    float3 velocity = voxelData.gba;
-                    float3 distortedUVW = uvw - velocity * 0.05; 
+
+                    float3 timeOffset = _Time.y * _BoilSpeed * float3(0.5, 0.8, 0.3);
+                    float3 distortion = float3(
+                        sin(currentPos.y * 15.0 + timeOffset.x),
+                        cos(currentPos.z * 15.0 + timeOffset.y),
+                        sin(currentPos.x * 15.0 + timeOffset.z)
+                    );
+
+                    float3 distortedUVW = uvw + distortion * _BoilStrength;
+
                     float rawDensity = SAMPLE_TEXTURE3D_LOD(_MainVoxelTex, sampler_MainVoxelTex, distortedUVW, 0).r;
-                    
                     float shapedDensity = smoothstep(_EdgeMin, _EdgeMax, rawDensity);
+
+                    float3 detailUVW = currentPos * _DetailScale + _WindDirection.xyz * _Time.y;
+                   
+                    // cheap noise
+                    float d1 = sin(detailUVW.x) * cos(detailUVW.y + _Time.y) * sin(detailUVW.z);
+                    float d2 = cos(detailUVW.x * 1.5 - _Time.y) * sin(detailUVW.y * 1.5) * cos(detailUVW.z * 1.5);
+                    float detailNoise = (d1 + d2) * 0.25 + 0.5;
+
+                    shapedDensity *= lerp(1.0, detailNoise, _DetailStrength);
+
                     float density = shapedDensity * _DensityScale;
                     
                     if (density > 0.01)

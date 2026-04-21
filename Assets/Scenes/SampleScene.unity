@@ -1234,7 +1234,7 @@ PrefabInstance:
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: material
       value: 
-      objectReference: {fileID: 2100000, guid: afad7ce91edb54a46b50af1cb64b34f4, type: 2}
+      objectReference: {fileID: 2100000, guid: 6b9553ac194293c47b18a1988b28a951, type: 2}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: showGizmos
       value: 1
