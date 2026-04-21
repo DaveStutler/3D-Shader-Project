@@ -128,6 +128,86 @@ public class SmokeUpdater : MonoBehaviour
         }
         timeCounter += Time.deltaTime;
     }
+    /// <summary>
+    /// Zero out any velocity component that points toward a solid (masked) neighbor
+    /// or toward the edge of the grid. This prevents smoke from "leaking" into solid areas or outside the grid.
+    /// </summary>
+    void EnforceVelocityBoundaries()
+    {
+        Vector3Int res = MainVoxelGrid.resolution;
+
+        for (int z = 0; z < res.z; z++)
+        {
+            for (int y = 0; y < res.y; y++)
+            {
+                for (int x = 0; x < res.x; x++)
+                {
+                    int i = x + y * res.x + z * res.y * res.x;
+                    if (_collisionMask[i]) continue;
+
+                    float vx = currentPixels[i].g;
+                    float vy = currentPixels[i].b;
+                    float vz = currentPixels[i].a;
+
+                    // +X direction
+                    if (vx > 0f)
+                    {
+                        if (x + 1 >= res.x || _collisionMask[(x + 1) + y * res.x + z * res.y * res.x])
+                            vx = 0f;
+                    }
+                    // -X direction
+                    if (vx < 0f)
+                    {
+                        if (x - 1 < 0 || _collisionMask[(x - 1) + y * res.x + z * res.y * res.x])
+                            vx = 0f;
+                    }
+                    // +Y direction
+                    if (vy > 0f)
+                    {
+                        if (y + 1 >= res.y || _collisionMask[x + (y + 1) * res.x + z * res.y * res.x])
+                            vy = 0f;
+                    }
+                    // -Y direction
+                    if (vy < 0f)
+                    {
+                        if (y - 1 < 0 || _collisionMask[x + (y - 1) * res.x + z * res.y * res.x])
+                            vy = 0f;
+                    }
+                    // +Z direction
+                    if (vz > 0f)
+                    {
+                        if (z + 1 >= res.z || _collisionMask[x + y * res.x + (z + 1) * res.y * res.x])
+                            vz = 0f;
+                    }
+                    // -Z direction
+                    if (vz < 0f)
+                    {
+                        if (z - 1 < 0 || _collisionMask[x + y * res.x + (z - 1) * res.y * res.x])
+                            vz = 0f;
+                    }
+
+                    currentPixels[i].g = vx;
+                    currentPixels[i].b = vy;
+                    currentPixels[i].a = vz;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Returns true if the given grid coordinate is out of bounds OR is a solid voxel.
+    /// </summary>
+    bool IsSolidOrOutOfBounds(int x, int y, int z, Vector3Int res)
+    {
+        if (x < 0 || x >= res.x || y < 0 || y >= res.y || z < 0 || z >= res.z)
+            return true;
+        return _collisionMask[x + y * res.x + z * res.y * res.x];
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // EVOLUTION PHASES
+    // ─────────────────────────────────────────────────────────────────────────
+
     void SteadyStateEvolution()
     {
         if (MainVoxelGrid == null || MainVoxelGrid.mainGrid == null) return;
@@ -142,6 +222,8 @@ public class SmokeUpdater : MonoBehaviour
             lastFramePixels = new Color[currentPixels.Length];
 
         System.Array.Copy(currentPixels, lastFramePixels, currentPixels.Length);
+
+        EnforceVelocityBoundaries();
 
         for (int z = 0; z < res.z; z++)
         {
@@ -162,9 +244,17 @@ public class SmokeUpdater : MonoBehaviour
                     int ix = Mathf.Clamp(Mathf.RoundToInt(backX), 0, res.x - 1);
                     int iy = Mathf.Clamp(Mathf.RoundToInt(backY), 0, res.y - 1);
                     int iz = Mathf.Clamp(Mathf.RoundToInt(backZ), 0, res.z - 1);
-                    int prevIdx = ix + iy * res.x + iz * res.y * res.x;
+                    // int prevIdx = ix + iy * res.x + iz * res.y * res.x;
 
-                    currentPixels[i].r = lastFramePixels[prevIdx].r;
+                    if (IsSolidOrOutOfBounds(ix, iy, iz, res))
+                    {
+                        currentPixels[i].r = lastFramePixels[i].r;
+                    }
+                    else
+                    {
+                        int prevIdx = ix + iy * res.x + iz * res.y * res.x;
+                        currentPixels[i].r = lastFramePixels[prevIdx].r;
+                    }
 
                     currentPixels[i].g = lastFramePixels[i].g * velocityDamping;
                     currentPixels[i].b = lastFramePixels[i].b * velocityDamping;
@@ -178,6 +268,8 @@ public class SmokeUpdater : MonoBehaviour
                 }
             }
         }
+
+        EnforceVelocityBoundaries();
 
         MainVoxelGrid.mainGrid.SetPixels(currentPixels);
         MainVoxelGrid.mainGrid.Apply();
