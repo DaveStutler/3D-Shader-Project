@@ -8,7 +8,7 @@ public class SmokeUpdater : MonoBehaviour
     [SerializeField] private float maxDensityDelta = 0.0f;
     [SerializeField] private float minDensity = 0.0f;
     [SerializeField] private float maxDensity = 5.0f;
-    [SerializeField] private float smokeDuration = 5.0f; 
+    [SerializeField] private float smokeDuration = 5.0f;
 
     [Header("Growth Settings")]
     [SerializeField] private float growStageDuration = 1.0f;
@@ -28,6 +28,9 @@ public class SmokeUpdater : MonoBehaviour
 
     public VoxelGrid MainVoxelGrid;
     public VoxelGrid CollisionVoxelGrid;
+
+
+    private int _originVoxelX, _originVoxelY, _originVoxelZ;
 
     public void InitializePixels()
     {
@@ -63,6 +66,10 @@ public class SmokeUpdater : MonoBehaviour
         Vector3 centerPos = transform.position;
         Vector3Int res = MainVoxelGrid.resolution;
 
+        _originVoxelX = Mathf.Clamp(Mathf.RoundToInt((res.x - 1) * 0.5f), 0, res.x - 1);
+        _originVoxelY = Mathf.Clamp(Mathf.RoundToInt((res.y - 1) * 0.5f), 0, res.y - 1);
+        _originVoxelZ = Mathf.Clamp(Mathf.RoundToInt((res.z - 1) * 0.5f), 0, res.z - 1);
+
         for (int z = 0; z < res.z; z++)
         {
             for (int y = 0; y < res.y; y++)
@@ -70,7 +77,7 @@ public class SmokeUpdater : MonoBehaviour
                 for (int x = 0; x < res.x; x++)
                 {
                     int i = x + y * res.x + z * res.y * res.x;
-                    
+
                     if (_collisionMask[i])
                     {
                         currentPixels[i] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -128,86 +135,6 @@ public class SmokeUpdater : MonoBehaviour
         }
         timeCounter += Time.deltaTime;
     }
-    /// <summary>
-    /// Zero out any velocity component that points toward a solid (masked) neighbor
-    /// or toward the edge of the grid. This prevents smoke from "leaking" into solid areas or outside the grid.
-    /// </summary>
-    void EnforceVelocityBoundaries()
-    {
-        Vector3Int res = MainVoxelGrid.resolution;
-
-        for (int z = 0; z < res.z; z++)
-        {
-            for (int y = 0; y < res.y; y++)
-            {
-                for (int x = 0; x < res.x; x++)
-                {
-                    int i = x + y * res.x + z * res.y * res.x;
-                    if (_collisionMask[i]) continue;
-
-                    float vx = currentPixels[i].g;
-                    float vy = currentPixels[i].b;
-                    float vz = currentPixels[i].a;
-
-                    // +X direction
-                    if (vx > 0f)
-                    {
-                        if (x + 1 >= res.x || _collisionMask[(x + 1) + y * res.x + z * res.y * res.x])
-                            vx = 0f;
-                    }
-                    // -X direction
-                    if (vx < 0f)
-                    {
-                        if (x - 1 < 0 || _collisionMask[(x - 1) + y * res.x + z * res.y * res.x])
-                            vx = 0f;
-                    }
-                    // +Y direction
-                    if (vy > 0f)
-                    {
-                        if (y + 1 >= res.y || _collisionMask[x + (y + 1) * res.x + z * res.y * res.x])
-                            vy = 0f;
-                    }
-                    // -Y direction
-                    if (vy < 0f)
-                    {
-                        if (y - 1 < 0 || _collisionMask[x + (y - 1) * res.x + z * res.y * res.x])
-                            vy = 0f;
-                    }
-                    // +Z direction
-                    if (vz > 0f)
-                    {
-                        if (z + 1 >= res.z || _collisionMask[x + y * res.x + (z + 1) * res.y * res.x])
-                            vz = 0f;
-                    }
-                    // -Z direction
-                    if (vz < 0f)
-                    {
-                        if (z - 1 < 0 || _collisionMask[x + y * res.x + (z - 1) * res.y * res.x])
-                            vz = 0f;
-                    }
-
-                    currentPixels[i].g = vx;
-                    currentPixels[i].b = vy;
-                    currentPixels[i].a = vz;
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Returns true if the given grid coordinate is out of bounds OR is a solid voxel.
-    /// </summary>
-    bool IsSolidOrOutOfBounds(int x, int y, int z, Vector3Int res)
-    {
-        if (x < 0 || x >= res.x || y < 0 || y >= res.y || z < 0 || z >= res.z)
-            return true;
-        return _collisionMask[x + y * res.x + z * res.y * res.x];
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // EVOLUTION PHASES
-    // ─────────────────────────────────────────────────────────────────────────
-
     void SteadyStateEvolution()
     {
         if (MainVoxelGrid == null || MainVoxelGrid.mainGrid == null) return;
@@ -222,8 +149,6 @@ public class SmokeUpdater : MonoBehaviour
             lastFramePixels = new Color[currentPixels.Length];
 
         System.Array.Copy(currentPixels, lastFramePixels, currentPixels.Length);
-
-        EnforceVelocityBoundaries();
 
         for (int z = 0; z < res.z; z++)
         {
@@ -244,15 +169,9 @@ public class SmokeUpdater : MonoBehaviour
                     int ix = Mathf.Clamp(Mathf.RoundToInt(backX), 0, res.x - 1);
                     int iy = Mathf.Clamp(Mathf.RoundToInt(backY), 0, res.y - 1);
                     int iz = Mathf.Clamp(Mathf.RoundToInt(backZ), 0, res.z - 1);
-                    // int prevIdx = ix + iy * res.x + iz * res.y * res.x;
-
-                    if (IsSolidOrOutOfBounds(ix, iy, iz, res))
+                    int prevIdx = ix + iy * res.x + iz * res.y * res.x;
+                    if (!_collisionMask[prevIdx])
                     {
-                        currentPixels[i].r = lastFramePixels[i].r;
-                    }
-                    else
-                    {
-                        int prevIdx = ix + iy * res.x + iz * res.y * res.x;
                         currentPixels[i].r = lastFramePixels[prevIdx].r;
                     }
 
@@ -268,8 +187,6 @@ public class SmokeUpdater : MonoBehaviour
                 }
             }
         }
-
-        EnforceVelocityBoundaries();
 
         MainVoxelGrid.mainGrid.SetPixels(currentPixels);
         MainVoxelGrid.mainGrid.Apply();
@@ -309,37 +226,46 @@ public class SmokeUpdater : MonoBehaviour
         float currentWaveRadius = globalProgress * maxCloudRadius;
 
         float localDuration = growStageDuration * localGrowthRatio;
+        Vector3Int res = MainVoxelGrid.resolution;
 
-        for (int i = 0; i < currentPixels.Length; i++)
+        for (int z = 0; z < res.z; z++)
         {
-            if (_collisionMask[i])
+            for (int y = 0; y < res.y; y++)
             {
-                currentPixels[i] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-                continue;
-            }
-
-            float density = currentPixels[i].r;
-            float initialDensity = initialPixels[i].r * 1.0f;
-
-            if (density < initialDensity)
-            {
-                if (voxelDistances[i] <= currentWaveRadius)
+                for (int x = 0; x < res.x; x++)
                 {
-                    if (localDuration <= 0f)
+                    int i = x + y * res.x + z * res.y * res.x;
+
+                    if (_collisionMask[i])
                     {
-                        density = initialDensity;
+                        currentPixels[i] = new Color(0, 0, 0, 0);
+                        continue;
                     }
-                    else
+
+                    float density = currentPixels[i].r;
+                    float initialDensity = initialPixels[i].r;
+
+                    if (density < initialDensity && voxelDistances[i] <= currentWaveRadius)
                     {
-                        float localGrowRate = initialDensity / localDuration;
-                        density += localGrowRate * Time.deltaTime;
+                        bool canReach = HasLineOfSight(
+                            _originVoxelX, _originVoxelY, _originVoxelZ, x, y, z);
+
+                        if (canReach)
+                        {
+                            if (localDuration <= 0f)
+                                density = initialDensity;
+                            else
+                            {
+                                float localGrowRate = initialDensity / localDuration;
+                                density += localGrowRate * Time.deltaTime;
+                            }
+                        }
                     }
+
+                    currentPixels[i].r = Mathf.Clamp(density, minDensity, initialDensity);
                 }
             }
-
-            currentPixels[i].r = Mathf.Clamp(density, minDensity, initialDensity);
         }
-
         grid.SetPixels(currentPixels);
         grid.Apply();
     }
@@ -392,5 +318,49 @@ public class SmokeUpdater : MonoBehaviour
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Returns true if there is a clear (non-collision) line of sight 
+    /// from voxel (x0,y0,z0) to voxel (x1,y1,z1).
+    /// Uses a simple 3D DDA march.
+    /// </summary>
+    private bool HasLineOfSight(int x0, int y0, int z0, int x1, int y1, int z1)
+    {
+        Vector3Int res = MainVoxelGrid.resolution;
+
+        int dx = Mathf.Abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+        int dy = Mathf.Abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+        int dz = Mathf.Abs(z1 - z0), sz = z0 < z1 ? 1 : -1;
+
+        int cx = x0, cy = y0, cz = z0;
+
+        int dm = Mathf.Max(dx, dy, dz);
+        if (dm == 0) return true;
+
+        // Bresenham 3D
+        int p1 = 2 * dy - dx;
+        int p2 = 2 * dz - dx;
+
+        // Use parametric stepping along the dominant axis
+        float stepX = (x1 - x0) / (float)dm;
+        float stepY = (y1 - y0) / (float)dm;
+        float stepZ = (z1 - z0) / (float)dm;
+
+        for (int step = 1; step < dm; step++) // exclude endpoints
+        {
+            int nx = Mathf.RoundToInt(x0 + stepX * step);
+            int ny = Mathf.RoundToInt(y0 + stepY * step);
+            int nz = Mathf.RoundToInt(z0 + stepZ * step);
+
+            nx = Mathf.Clamp(nx, 0, res.x - 1);
+            ny = Mathf.Clamp(ny, 0, res.y - 1);
+            nz = Mathf.Clamp(nz, 0, res.z - 1);
+
+            int idx = nx + ny * res.x + nz * res.y * res.x;
+            if (_collisionMask[idx]) return false; // wall hit → blocked
+        }
+
+        return true;
     }
 }
