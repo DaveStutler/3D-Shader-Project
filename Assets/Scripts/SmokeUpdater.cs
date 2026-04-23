@@ -28,6 +28,9 @@ public class SmokeUpdater : MonoBehaviour
 
     public VoxelGrid MainVoxelGrid;
     public VoxelGrid CollisionVoxelGrid;
+    public float advectionStrength = 0.8f;
+    public float velocityDamping = 0.98f;
+    public float regrowthRate = 0.5f;
 
 
     private int _originVoxelX, _originVoxelY, _originVoxelZ;
@@ -142,9 +145,6 @@ public class SmokeUpdater : MonoBehaviour
         Vector3Int res = MainVoxelGrid.resolution;
         float dt = Time.deltaTime;
 
-        float advectionStrength = 0.5f;
-        float velocityDamping = 0.98f;
-
         if (lastFramePixels == null || lastFramePixels.Length != currentPixels.Length)
             lastFramePixels = new Color[currentPixels.Length];
 
@@ -157,9 +157,7 @@ public class SmokeUpdater : MonoBehaviour
                 for (int x = 0; x < res.x; x++)
                 {
                     int i = x + y * res.x + z * res.y * res.x;
-
                     if (_collisionMask[i]) continue;
-
                     Vector3 vel = new Vector3(lastFramePixels[i].g, lastFramePixels[i].b, lastFramePixels[i].a);
 
                     float backX = x - vel.x * dt * advectionStrength * res.x;
@@ -170,9 +168,14 @@ public class SmokeUpdater : MonoBehaviour
                     int iy = Mathf.Clamp(Mathf.RoundToInt(backY), 0, res.y - 1);
                     int iz = Mathf.Clamp(Mathf.RoundToInt(backZ), 0, res.z - 1);
                     int prevIdx = ix + iy * res.x + iz * res.y * res.x;
+
                     if (!_collisionMask[prevIdx])
                     {
-                        currentPixels[i].r = lastFramePixels[prevIdx].r;
+                        currentPixels[i].r = Mathf.Min(lastFramePixels[prevIdx].r, initialPixels[i].r);
+                    }
+                    if (currentPixels[i].r < initialPixels[i].r)
+                    {
+                        currentPixels[i].r = Mathf.MoveTowards(currentPixels[i].r, initialPixels[i].r, regrowthRate * dt);
                     }
 
                     currentPixels[i].g = lastFramePixels[i].g * velocityDamping;
@@ -182,7 +185,7 @@ public class SmokeUpdater : MonoBehaviour
                     if (currentPixels[i].r > densityThreshold)
                     {
                         currentPixels[i].r += Random.Range(-0.01f, 0.02f) * dt;
-                        currentPixels[i].r = Mathf.Clamp(currentPixels[i].r, minDensity, maxDensity);
+                        currentPixels[i].r = Mathf.Clamp(currentPixels[i].r, minDensity, initialPixels[i].r);
                     }
                 }
             }
@@ -313,6 +316,47 @@ public class SmokeUpdater : MonoBehaviour
                             currentPixels[i].g += velocityForce.x * falloff * Time.deltaTime;
                             currentPixels[i].b += velocityForce.y * falloff * Time.deltaTime;
                             currentPixels[i].a += velocityForce.z * falloff * Time.deltaTime;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void AddExplosionForceAtWorldPos(Vector3 worldPos, float force, float radius)
+    {
+        if (currentPixels == null || MainVoxelGrid == null) return;
+
+        Vector3Int res = MainVoxelGrid.resolution;
+        Vector3 localPos = transform.InverseTransformPoint(worldPos);
+
+        int centerX = Mathf.RoundToInt((localPos.x / MainVoxelGrid.spaceScale.x + 0.5f) * res.x);
+        int centerY = Mathf.RoundToInt((localPos.y / MainVoxelGrid.spaceScale.y + 0.5f) * res.y);
+        int centerZ = Mathf.RoundToInt((localPos.z / MainVoxelGrid.spaceScale.z + 0.5f) * res.z);
+
+        int r = Mathf.CeilToInt(radius);
+        for (int z = centerZ - r; z <= centerZ + r; z++)
+        {
+            for (int y = centerY - r; y <= centerY + r; y++)
+            {
+                for (int x = centerX - r; x <= centerX + r; x++)
+                {
+                    if (x >= 0 && x < res.x && y >= 0 && y < res.y && z >= 0 && z < res.z)
+                    {
+                        int i = x + y * res.x + z * res.y * res.x;
+                        Vector3 voxelPos = new Vector3(x, y, z);
+                        float dist = Vector3.Distance(voxelPos, new Vector3(centerX, centerY, centerZ));
+
+                        if (dist <= radius && dist > 0.1f)
+                        {
+                            float falloff = 1.0f - (dist / radius);
+                            Vector3 dir = (voxelPos - new Vector3(centerX, centerY, centerZ)).normalized;
+
+                            currentPixels[i].g += dir.x * force * falloff * Time.deltaTime;
+                            currentPixels[i].b += dir.y * force * falloff * Time.deltaTime;
+                            currentPixels[i].a += dir.z * force * falloff * Time.deltaTime;
+
+                            currentPixels[i].r *= (1.0f - falloff);
                         }
                     }
                 }

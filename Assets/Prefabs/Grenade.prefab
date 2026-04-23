@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 4036320507332092}
   - component: {fileID: 4646169760966264813}
   - component: {fileID: 741582869165863136}
-  - component: {fileID: 6079224637943069392}
+  - component: {fileID: -7215089161579923385}
   m_Layer: 0
-  m_Name: Bullet
+  m_Name: Grenade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -69,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: db888cb83810a794691ee586b94dfd35, type: 2}
+  - {fileID: 2100000, guid: 6f1cb7d40733da64db2b47688252ce3b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -141,7 +141,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!114 &6079224637943069392
+--- !u!114 &-7215089161579923385
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -150,9 +150,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7343088175155651089}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66c448868d608ff49bfdd454c9b477cc, type: 3}
+  m_Script: {fileID: 11500000, guid: 44c87187fa09e7e4c84f6d798db5aeac, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bullet
-  speed: 100
-  impactForce: 5000
-  impactRadius: 5
+  m_EditorClassIdentifier: Assembly-CSharp::Grenade
+  speed: 20
+  explosionForce: 10000
+  explosionRadius: 25

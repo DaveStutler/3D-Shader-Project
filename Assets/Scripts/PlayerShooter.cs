@@ -3,8 +3,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerShooter : MonoBehaviour
 {
-    public GameObject bulletPrefab; 
-    public float shootForce = 30f;  
+    public GameObject bulletPrefab;
+    public GameObject grenadePrefab;
+    public float shootForce = 100f;  
     void Start()
     {
         Cursor.visible = false;
@@ -14,16 +15,15 @@ public class PlayerShooter : MonoBehaviour
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            Shoot();
+            Shoot(bulletPrefab);
+        }
+        if (Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            Shoot(grenadePrefab);
         }
     }
-    void Shoot()
+    void Shoot(GameObject prefab)
     {
-        GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
-        Rigidbody rb = bullet.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.linearVelocity = transform.forward * shootForce;
-        }
+        GameObject instance = Instantiate(prefab, transform.position, transform.rotation);
     }
 }
