@@ -119,159 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &150291223
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3475284812560810114, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: m_Name
-      value: SmokeGrid (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: maxDensity
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: smokeDuration
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: maxCloudRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: localGrowthRatio
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: growStageDuration
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -4.07
-      objectReference: {fileID: 0}
-    - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -20.87
-      objectReference: {fileID: 0}
-    - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4460718124439866875, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: CollisionResoltion
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 4547452709689726266, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: showGizmos
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4547452709689726266, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: drawOnlyBounds
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5393161750105029590, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: showGizmos
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5393161750105029590, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: resolution.x
-      value: 64
-      objectReference: {fileID: 0}
-    - target: {fileID: 5393161750105029590, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: resolution.y
-      value: 64
-      objectReference: {fileID: 0}
-    - target: {fileID: 5393161750105029590, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: resolution.z
-      value: 64
-      objectReference: {fileID: 0}
-    - target: {fileID: 5393161750105029590, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: drawOnlyBounds
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7269143942438258485, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: sliceIndex
-      value: 36
-      objectReference: {fileID: 0}
-    - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: material
-      value: 
-      objectReference: {fileID: 2100000, guid: 6b9553ac194293c47b18a1988b28a951, type: 2}
-    - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: showGizmos
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: spaceScale.x
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: spaceScale.y
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: spaceScale.z
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: debugVoxelGrid
-      value: 
-      objectReference: {fileID: 1331250254}
-    - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: drawOnlyBounds
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: voxelCountLimit
-      value: 100000
-      objectReference: {fileID: 0}
-    - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: densityMulptiplier
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: voxelFillPercentage
-      value: 0.2
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -696,7 +543,7 @@ Transform:
   m_GameObject: {fileID: 642345941}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.61207926, z: 0, w: 0.79079646}
-  m_LocalPosition: {x: 4.09, y: 0.97, z: 2.32}
+  m_LocalPosition: {x: 1.65, y: 4.62, z: -7.11}
   m_LocalScale: {x: 3.46, y: 3.46, z: 3.46}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -1538,15 +1385,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1.52
       objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0
+      value: 6.6
       objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -7.26
       objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1664,7 +1511,6 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 7503742274668310995}
-  - {fileID: 150291223}
   - {fileID: 4085281002658976465}
   - {fileID: 1878204934}
   - {fileID: 517341237}

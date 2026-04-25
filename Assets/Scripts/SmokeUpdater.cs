@@ -34,6 +34,7 @@ public class SmokeUpdater : MonoBehaviour
 
 
     private int _originVoxelX, _originVoxelY, _originVoxelZ;
+    private float dynamicMaxCost = 1.0f;
 
     public void InitializePixels()
     {
@@ -84,16 +85,24 @@ public class SmokeUpdater : MonoBehaviour
                     if (_collisionMask[i])
                     {
                         currentPixels[i] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+                        initialPixels[i] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
                         continue;
                     }
 
+                    voxelDistances[i] = initialPixels[i].g;
+                    dynamicMaxCost = Mathf.Max(dynamicMaxCost, initialPixels[i].b);
+
+                    initialPixels[i].g = 0f;
+                    initialPixels[i].b = 0f;
+                    initialPixels[i].a = 0f;
+
                     if (growStageDuration <= 0f)
                     {
-                        currentPixels[i].r = initialPixels[i].r;
+                        currentPixels[i] = initialPixels[i];
                     }
                     else
                     {
-                        currentPixels[i].r = minDensity;
+                        currentPixels[i] = new Color(minDensity, 0f, 0f, 0f);
                     }
                     currentPixels[i].g = initialPixels[i].g;
                     currentPixels[i].b = initialPixels[i].b;
@@ -226,7 +235,7 @@ public class SmokeUpdater : MonoBehaviour
 
         float globalProgress = Mathf.Clamp01(timeCounter / growStageDuration);
         globalProgress = Mathf.SmoothStep(0.0f, 1.0f, Mathf.SmoothStep(0.0f, 1.0f, globalProgress));
-        float currentWaveRadius = globalProgress * maxCloudRadius;
+        float currentWaveRadius = globalProgress * dynamicMaxCost;
 
         float localDuration = growStageDuration * localGrowthRatio;
         Vector3Int res = MainVoxelGrid.resolution;

@@ -98,7 +98,7 @@ public class SmokeGrid : MonoBehaviour
         mainVoxelGrid.mainGrid.Apply();
     }
 
-    public void GenerateSampleFloodFill(float noiseScale = 0.2f)
+    public void GenerateSampleFloodFillOld(float noiseScale = 0.2f)
     {
         int resX = (int)mainVoxelGrid.resolution.x;
         int resY = (int)mainVoxelGrid.resolution.y;
@@ -195,6 +195,107 @@ public class SmokeGrid : MonoBehaviour
                     }
                 }
             }
+        }
+
+        mainVoxelGrid.mainGrid.SetPixels(colors);
+        mainVoxelGrid.mainGrid.Apply();
+    }
+
+    public void GenerateSampleFloodFill(float noiseScale = 0.2f)
+    {
+        int resX = (int)mainVoxelGrid.resolution.x;
+        int resY = (int)mainVoxelGrid.resolution.y;
+        int resZ = (int)mainVoxelGrid.resolution.z;
+
+        Vector3Int emissionCenter = new Vector3Int(resX / 2, resY / 2, resZ / 2);
+
+        int totalVoxels = resX * resY * resZ;
+        int maxVoxels = (int)(voxelFillPercentage * totalVoxels);
+
+        Color[] colors = new Color[totalVoxels];
+        bool[] visited = new bool[totalVoxels];
+        Color[] collisionData = _smokeupdater.CollisionVoxelGrid.mainGrid.GetPixels();
+
+        MinHeapQueue<Vector3Int, float> frontier = new MinHeapQueue<Vector3Int, float>();
+
+        if (emissionCenter.x < 0 || emissionCenter.x >= resX ||
+            emissionCenter.y < 0 || emissionCenter.y >= resY ||
+            emissionCenter.z < 0 || emissionCenter.z >= resZ) return;
+
+        float CalculateCost(Vector3Int pos)
+        {
+            float dx = pos.x - emissionCenter.x;
+            float dy = pos.y - emissionCenter.y;
+            float dz = pos.z - emissionCenter.z;
+
+            float horizontalSquish = 1.0f;
+            float upwardSquish = 2.5f;
+            float downwardStretch = 0.4f;
+            float verticalWeight = (dy > 0) ? upwardSquish : downwardStretch;
+
+            return (dx * dx * horizontalSquish) + (dy * dy * verticalWeight) + (dz * dz * horizontalSquish);
+        }
+
+        frontier.Enqueue(emissionCenter, 0f);
+        visited[emissionCenter.x + emissionCenter.y * resX + emissionCenter.z * resY * resX] = true;
+
+        List<Vector3Int> validVoxels = new List<Vector3Int>(maxVoxels);
+        float maxCostReached = 0f;
+
+        Vector3Int[] directions = new Vector3Int[] {
+            new Vector3Int(1, 0, 0), new Vector3Int(-1, 0, 0),
+            new Vector3Int(0, 1, 0), new Vector3Int(0, -1, 0),
+            new Vector3Int(0, 0, 1), new Vector3Int(0, 0, -1)
+        };
+
+        while (frontier.Count > 0 && validVoxels.Count < maxVoxels)
+        {
+            Vector3Int current = frontier.Dequeue();
+            validVoxels.Add(current);
+
+            float currentCost = CalculateCost(current);
+            if (currentCost > maxCostReached) maxCostReached = currentCost;
+
+            foreach (Vector3Int dir in directions)
+            {
+                Vector3Int neighbor = current + dir;
+
+                if (neighbor.x >= 0 && neighbor.x < resX &&
+                    neighbor.y >= 0 && neighbor.y < resY &&
+                    neighbor.z >= 0 && neighbor.z < resZ)
+                {
+                    int neighborIdx = neighbor.x + neighbor.y * resX + neighbor.z * resY * resX;
+
+                    if (!visited[neighborIdx])
+                    {
+                        visited[neighborIdx] = true;
+
+                        if (collisionData[neighborIdx].r > 0.1f) continue;
+
+                        float cost = CalculateCost(neighbor);
+                        frontier.Enqueue(neighbor, cost);
+                    }
+                }
+            }
+        }
+
+        foreach (Vector3Int voxel in validVoxels)
+        {
+            int idx = voxel.x + voxel.y * resX + voxel.z * resY * resX;
+            float voxelCost = CalculateCost(voxel);
+
+            float mask = Mathf.Clamp01(1.0f - (voxelCost / (maxCostReached + Mathf.Epsilon)));
+            mask = Mathf.SmoothStep(0, 1, mask);
+
+            Vector3 pos = mainVoxelGrid.GetGridPosition(voxel.x, voxel.y, voxel.z);
+            float px = pos.x * noiseScale;
+            float py = pos.y * noiseScale;
+            float pz = pos.z * noiseScale;
+
+            float noiseValue = Mathf.PerlinNoise(px, py) * Mathf.PerlinNoise(py, pz);
+            float finalDensity = noiseValue * mask * densityMulptiplier;
+
+            colors[idx] = new Color(finalDensity, voxelCost, maxCostReached, 0f);
         }
 
         mainVoxelGrid.mainGrid.SetPixels(colors);

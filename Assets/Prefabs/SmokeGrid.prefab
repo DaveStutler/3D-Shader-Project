@@ -50,11 +50,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aae27e1a1753014408b33385c5d6e2ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SmokeGrid
-  spaceScale: {x: 10, y: 10, z: 10}
-  densityMulptiplier: 10
+  spaceScale: {x: 20, y: 20, z: 20}
+  densityMulptiplier: 20
+  voxelFillPercentage: 0.2
   _smokeupdater: {fileID: 3766462762712591354}
   showGizmos: 1
-  drawOnlyBounds: 0
+  drawOnlyBounds: 1
   mainVoxelGrid: {fileID: 5393161750105029590}
   collisionMasker: {fileID: 4460718124439866875}
   smokeRenderer: {fileID: 5729090615293513495}
@@ -76,13 +77,16 @@ MonoBehaviour:
   minDensityDelta: -0.3
   maxDensityDelta: 0
   minDensity: 0
-  maxDensity: 5
-  smokeDuration: 5
-  growStageDuration: 1
-  maxCloudRadius: 5
-  localGrowthRatio: 0.5
+  maxDensity: 20
+  smokeDuration: 10
+  growStageDuration: 3
+  maxCloudRadius: 10
+  localGrowthRatio: 0.1
   MainVoxelGrid: {fileID: 5393161750105029590}
   CollisionVoxelGrid: {fileID: 0}
+  advectionStrength: 0.8
+  velocityDamping: 0.98
+  regrowthRate: 0.5
 --- !u!114 &4460718124439866875
 MonoBehaviour:
   m_ObjectHideFlags: 0

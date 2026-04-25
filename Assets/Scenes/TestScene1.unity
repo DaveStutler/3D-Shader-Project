@@ -324,15 +324,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: spaceScale.x
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: spaceScale.y
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: spaceScale.z
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: drawOnlyBounds
@@ -421,15 +421,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: spaceScale.x
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: spaceScale.y
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: spaceScale.z
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: drawOnlyBounds
@@ -911,15 +911,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: spaceScale.x
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: spaceScale.y
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: spaceScale.z
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: drawOnlyBounds

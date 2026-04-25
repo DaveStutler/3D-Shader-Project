@@ -181,7 +181,7 @@ Shader "Custom/URP_RaymarchingSmoke"
                     float3 distortedUVW = uvw + distortion * _BoilStrength;
 
                     float rawDensity = SAMPLE_TEXTURE3D_LOD(_MainVoxelTex, sampler_MainVoxelTex, distortedUVW, 0).r;
-                    float shapedDensity = smoothstep(_EdgeMin, _EdgeMax, rawDensity);
+                    float shapedDensity = max(0.0, rawDensity - _EdgeMin);
 
                     float3 detailUVW = currentPos * _DetailScale + _WindDirection.xyz * _Time.y;
                    
@@ -192,25 +192,26 @@ Shader "Custom/URP_RaymarchingSmoke"
 
                     shapedDensity *= lerp(1.0, detailNoise, _DetailStrength);
 
-                    float density = shapedDensity * _DensityScale;
+                    float density = pow(shapedDensity, 1.5) * _DensityScale;    
                     
                     if (density > 0.01)
                     {
                         float lightDensity = 0;
                         float3 lightMarchPos = currentPos;
                         
-                        for(int j = 0; j < 3; j++)
+                        for(int j = 0; j < 5; j++)
                         {
-                            lightMarchPos += localLightDir * (_StepSize * 2.0);
+                            lightMarchPos += localLightDir * (_StepSize * 4.0);
                             float3 l_uvw = lightMarchPos + 0.5;
                             if(any(l_uvw < 0) || any(l_uvw > 1)) break;
                             
                             float shadowRawDensity = SAMPLE_TEXTURE3D_LOD(_MainVoxelTex, sampler_MainVoxelTex, l_uvw, 0).r;
-                            lightDensity += smoothstep(_EdgeMin, _EdgeMax, shadowRawDensity) * _DensityScale;
+                            lightDensity += max(0.0, shadowRawDensity - _EdgeMin) * _DensityScale;
                         }
-                        
+
                         float lightAttenuation = exp(-lightDensity * _LightAbsorption);
-                        float3 stepLightColor = _AmbientColor.rgb + (lightColor * lightAttenuation * phase * 2.0);
+                        float powderEffect = 1.0 - exp(-density * 2.0); 
+                        float3 stepLightColor = _AmbientColor.rgb + (lightColor * lightAttenuation * phase * 2.5 * powderEffect);
                         
                         float dTr = exp(-density * _StepSize);
                         scatteredLight += stepLightColor * (1.0 - dTr) * transmittance * _SmokeBaseColor.rgb;
