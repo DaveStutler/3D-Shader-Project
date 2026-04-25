@@ -338,6 +338,10 @@ PrefabInstance:
       propertyPath: drawOnlyBounds
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
+      propertyPath: voxelFillPercentage
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -430,6 +434,10 @@ PrefabInstance:
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: drawOnlyBounds
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
+      propertyPath: voxelFillPercentage
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -916,6 +924,10 @@ PrefabInstance:
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: drawOnlyBounds
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
+      propertyPath: voxelFillPercentage
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

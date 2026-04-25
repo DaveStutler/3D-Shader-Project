@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class SmokeGrid : MonoBehaviour
 {
@@ -6,6 +8,9 @@ public class SmokeGrid : MonoBehaviour
     public Vector3 spaceScale = new Vector3(10f, 10f, 10f);
 
     public float densityMulptiplier = 10.0f;
+
+    [Range(0f, 1.0f)]
+    [SerializeField] private float voxelFillPercentage = 0.20f;
 
     // temp
     [SerializeField]
@@ -39,13 +44,16 @@ public class SmokeGrid : MonoBehaviour
 
     private void Start()
     {
-        GenerateSample();
+        // GenerateSample();
         smokeRenderer.SetMaterial(material);
         smokeRenderer.SetMainVoxelGrid(mainVoxelGrid.mainGrid);
 
         collisionMasker.initialize(mainVoxelGrid);
 
         _smokeupdater.CollisionVoxelGrid = collisionMasker.GetCollisionVoxel();
+
+        GenerateSampleFloodFill();
+
         _smokeupdater.InitializePixels();
 
         if (debugVoxelGrid != null)
@@ -82,6 +90,109 @@ public class SmokeGrid : MonoBehaviour
 
                     int idx = x + y * mainVoxelGrid.resolution.x + z * mainVoxelGrid.resolution.y * mainVoxelGrid.resolution.x;
                     colors[idx] = new Color(finalDensity, velocity.x, velocity.y, velocity.z);
+                }
+            }
+        }
+
+        mainVoxelGrid.mainGrid.SetPixels(colors);
+        mainVoxelGrid.mainGrid.Apply();
+    }
+
+    public void GenerateSampleFloodFill(float noiseScale = 0.2f)
+    {
+        int resX = (int)mainVoxelGrid.resolution.x;
+        int resY = (int)mainVoxelGrid.resolution.y;
+        int resZ = (int)mainVoxelGrid.resolution.z;
+
+        Vector3Int emissionCenter = new Vector3Int(
+            (int)(resX / 2),
+            (int)(resY / 2),
+            (int)(resZ / 2)
+        );
+
+        int totalVoxels = resX * resY * resZ;
+        int maxVoxels = (int)(voxelFillPercentage * totalVoxels);
+
+        Color[] colors = new Color[totalVoxels];
+        bool[] visited = new bool[totalVoxels];
+        Color[] collisionData = _smokeupdater.CollisionVoxelGrid.mainGrid.GetPixels();
+
+        MinHeapQueue<Vector3Int, float> frontier = new MinHeapQueue<Vector3Int, float>();
+
+        if (emissionCenter.x < 0 || emissionCenter.x >= resX ||
+            emissionCenter.y < 0 || emissionCenter.y >= resY ||
+            emissionCenter.z < 0 || emissionCenter.z >= resZ)
+        {
+            Debug.LogWarning("Flood fill emissionCenter is outside the voxel grid bounds.");
+            return;
+        }
+
+        frontier.Enqueue(emissionCenter, 0f);
+        int startIdx = emissionCenter.x + emissionCenter.y * resX + emissionCenter.z * resY * resX;
+        visited[startIdx] = true;
+
+        int voxelsFilled = 0;
+
+        Vector3Int[] directions = new Vector3Int[]
+        {
+            new Vector3Int(1, 0, 0), new Vector3Int(-1, 0, 0),
+            new Vector3Int(0, 1, 0), new Vector3Int(0, -1, 0),
+            new Vector3Int(0, 0, 1), new Vector3Int(0, 0, -1)
+        };
+
+        // Calculates how "expensive" a voxel is based on its position relative to the center.
+        float CalculateCost(Vector3Int pos)
+        {
+            float dx = pos.x - emissionCenter.x;
+            float dy = pos.y - emissionCenter.y;
+            float dz = pos.z - emissionCenter.z;
+
+            // Adjust these to shape your oblong sphere
+            // Lower multiplier = cheaper to move there (STRETCHES the cloud)
+            // Higher multiplier = harder to move there (SQUISHES the cloud)
+            float horizontalSquish = 1.0f;   // Neutral horizontal circle
+            float upwardSquish = 2.5f;       // High cost to go up (flattens the top)
+            float downwardStretch = 0.4f;    // Low cost to go down (pulls the bottom down)
+
+            float verticalWeight = (dy > 0) ? upwardSquish : downwardStretch;
+
+            return (dx * dx * horizontalSquish) + (dy * dy * verticalWeight) + (dz * dz * horizontalSquish);
+        }
+
+        while (frontier.Count > 0 && voxelsFilled < maxVoxels)
+        {
+            Vector3Int current = frontier.Dequeue();
+            int currentIdx = current.x + current.y * resX + current.z * resY * resX;
+
+            float px = (current.x + 100.5f) * noiseScale;
+            float py = (current.y + 100.5f) * noiseScale;
+            float pz = (current.z + 100.5f) * noiseScale;
+
+            float noiseValue = Mathf.PerlinNoise(px, py) * Mathf.PerlinNoise(py, pz);
+            float finalDensity = noiseValue * densityMulptiplier;
+
+            colors[currentIdx] = new Color(finalDensity, 0, 0, 0);
+            voxelsFilled++;
+
+            foreach (Vector3Int dir in directions)
+            {
+                Vector3Int neighbor = current + dir;
+
+                if (neighbor.x >= 0 && neighbor.x < resX &&
+                    neighbor.y >= 0 && neighbor.y < resY &&
+                    neighbor.z >= 0 && neighbor.z < resZ)
+                {
+                    int neighborIdx = neighbor.x + neighbor.y * resX + neighbor.z * resY * resX;
+
+                    if (!visited[neighborIdx])
+                    {
+                        visited[neighborIdx] = true;
+
+                        if (collisionData[neighborIdx].r > 0.1f) continue; // Blocked by map geometry
+
+                        float cost = CalculateCost(neighbor);
+                        frontier.Enqueue(neighbor, cost);
+                    }
                 }
             }
         }
@@ -179,5 +290,66 @@ public class SmokeGrid : MonoBehaviour
                 }
             }
         }
+    }
+}
+
+// A lightweight, array-based Binary Min-Heap
+public class MinHeapQueue<TItem, TPriority> where TPriority : IComparable<TPriority>
+{
+    private List<(TItem Item, TPriority Priority)> _elements = new List<(TItem, TPriority)>();
+
+    public int Count => _elements.Count;
+
+    public void Enqueue(TItem item, TPriority priority)
+    {
+        _elements.Add((item, priority));
+        int i = _elements.Count - 1;
+
+        // Sift Up
+        while (i > 0)
+        {
+            int parent = (i - 1) / 2;
+            if (_elements[i].Priority.CompareTo(_elements[parent].Priority) >= 0) break;
+
+            var tmp = _elements[i];
+            _elements[i] = _elements[parent];
+            _elements[parent] = tmp;
+            i = parent;
+        }
+    }
+
+    public TItem Dequeue()
+    {
+        if (_elements.Count == 0) throw new InvalidOperationException("Queue is empty.");
+
+        TItem result = _elements[0].Item;
+        _elements[0] = _elements[_elements.Count - 1];
+        _elements.RemoveAt(_elements.Count - 1);
+
+        int i = 0;
+
+        // Sift Down
+        while (true)
+        {
+            int leftChild = 2 * i + 1;
+            if (leftChild >= _elements.Count) break;
+
+            int rightChild = leftChild + 1;
+            int minChild = leftChild;
+
+            if (rightChild < _elements.Count && _elements[rightChild].Priority.CompareTo(_elements[leftChild].Priority) < 0)
+            {
+                minChild = rightChild;
+            }
+
+            if (_elements[i].Priority.CompareTo(_elements[minChild].Priority) <= 0) break;
+
+            var tmp = _elements[i];
+            _elements[i] = _elements[minChild];
+            _elements[minChild] = tmp;
+            i = minChild;
+        }
+
+        return result;
     }
 }
