@@ -108,28 +108,28 @@ Material:
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
-    - _BoilSpeed: 2
-    - _BoilStrength: 0
+    - _BoilSpeed: 4
+    - _BoilStrength: 0.003
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
-    - _DensityScale: 30
+    - _DensityScale: 50
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DetailScale: 0.75
-    - _DetailStrength: 0.7
+    - _DetailScale: 50
+    - _DetailStrength: 2
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _EdgeMax: 0.6
-    - _EdgeMin: 0.1
+    - _EdgeMax: 1
+    - _EdgeMin: 0.2
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _HG_G: 0.4
-    - _LightAbsorption: 3
+    - _LightAbsorption: 4
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
@@ -140,7 +140,7 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _StepSize: 0.045
+    - _StepSize: 0.02
     - _Surface: 0
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
@@ -153,6 +153,6 @@ Material:
     - _SmokeBaseColor: {r: 0.9433962, g: 0.9433962, b: 0.9433962, a: 1}
     - _SmokeColor: {r: 0.5471698, g: 0.5420078, b: 0.5420078, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _WindDirection: {r: 0, g: 0, b: 0, a: 0}
+    - _WindDirection: {r: 0, g: -1, b: 0, a: -3.06}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

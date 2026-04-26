@@ -21,8 +21,8 @@ Shader "Custom/URP_RaymarchingSmoke"
         [Header(Dynamics and Details)]
         _BoilSpeed ("Boiling Speed", Range(0, 10)) = 2.0
         _BoilStrength ("Boiling Strength", Range(0, 0.1)) = 0.01
-        _DetailScale ("Detail Scale", Range(0, 1)) = 0.5
-        _DetailStrength ("Detail Erosion", Range(0, 1)) = 0.8
+        _DetailScale ("Detail Scale", Range(0, 50)) = 25
+        _DetailStrength ("Detail Erosion", Range(0, 5)) = 0.8
         _WindDirection ("Wind Direction", Vector) = (0.1, 0.5, 0.2, 0)
     }
 
@@ -178,21 +178,27 @@ Shader "Custom/URP_RaymarchingSmoke"
                         sin(currentPos.x * 15.0 + timeOffset.z)
                     );
 
-                    float3 distortedUVW = uvw + distortion * _BoilStrength;
 
-                    float rawDensity = SAMPLE_TEXTURE3D_LOD(_MainVoxelTex, sampler_MainVoxelTex, distortedUVW, 0).r;
-                    float shapedDensity = max(0.0, rawDensity - _EdgeMin);
+                    float rawDensity = SAMPLE_TEXTURE3D_LOD(_MainVoxelTex, sampler_MainVoxelTex, uvw, 0).r;
 
                     float3 detailUVW = currentPos * _DetailScale + _WindDirection.xyz * _Time.y;
-                   
-                    // cheap noise
-                    float d1 = sin(detailUVW.x) * cos(detailUVW.y + _Time.y) * sin(detailUVW.z);
-                    float d2 = cos(detailUVW.x * 1.5 - _Time.y) * sin(detailUVW.y * 1.5) * cos(detailUVW.z * 1.5);
-                    float detailNoise = (d1 + d2) * 0.25 + 0.5;
+                    float3 microWarp = float3(
+                        sin(detailUVW.y * 1.5 + _Time.y * 2.0),
+                        cos(detailUVW.z * 1.5 - _Time.y * 1.8),
+                        sin(detailUVW.x * 1.5 + _Time.y * 2.1)
+                    ) * 0.05; 
+                    float3 warpedUVW = detailUVW + microWarp * _BoilSpeed;
 
-                    shapedDensity *= lerp(1.0, detailNoise, _DetailStrength);
 
-                    float density = pow(shapedDensity, 1.5) * _DensityScale;    
+                    float n1 = sin(warpedUVW.x) * cos(warpedUVW.y) * sin(warpedUVW.z);
+                    float n2 = sin(warpedUVW.x * 3.5 - _Time.y * 3.0) * cos(warpedUVW.y * 3.5) * sin(warpedUVW.z * 3.5);
+                    float detailNoise = (n1 + n2 * 0.5) * 0.33 + 0.5;
+                    
+                    float erodedShape = rawDensity - detailNoise * _DetailStrength;
+
+                    float crispDensity = smoothstep(_EdgeMin, _EdgeMin + 0.05, erodedShape);
+
+                    float density = crispDensity * _DensityScale;
                     
                     if (density > 0.01)
                     {
