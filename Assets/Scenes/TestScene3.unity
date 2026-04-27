@@ -131,33 +131,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: SmokeGrid (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: maxDensity
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: smokeDuration
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: maxCloudRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: localGrowthRatio
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: growStageDuration
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.07
+      value: -4.653
       objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -265,7 +245,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: voxelFillPercentage
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1515,26 +1495,6 @@ PrefabInstance:
     - target: {fileID: 3475284812560810114, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_Name
       value: SmokeGrid
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: maxDensity
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: smokeDuration
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: maxCloudRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: localGrowthRatio
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
-      propertyPath: growStageDuration
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalPosition.x

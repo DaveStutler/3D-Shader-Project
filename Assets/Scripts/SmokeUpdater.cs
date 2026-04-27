@@ -141,7 +141,8 @@ public class SmokeUpdater : MonoBehaviour
         }
         else
         {
-            FizzleOut();
+            // FizzleOut();
+            EdgeErosion();
         }
         timeCounter += Time.deltaTime;
     }
@@ -166,6 +167,16 @@ public class SmokeUpdater : MonoBehaviour
                     int i = x + y * res.x + z * res.y * res.x;
                     if (_collisionMask[i]) continue;
                     Vector3 vel = new Vector3(lastFramePixels[i].g, lastFramePixels[i].b, lastFramePixels[i].a);
+
+                    float diffusionStrength = 0.1f;
+
+                    Vector3 randomDrift = new Vector3(
+                        Random.Range(-1f, 1f),
+                        Random.Range(-1f, 1f),
+                        Random.Range(-1f, 1f)
+                    ) * diffusionStrength;
+
+                    vel += randomDrift;
 
                     float backX = x - vel.x * dt * advectionStrength * res.x;
                     float backY = y - vel.y * dt * advectionStrength * res.y;
@@ -221,6 +232,85 @@ public class SmokeUpdater : MonoBehaviour
             }
 
             currentPixels[i].r = Mathf.Clamp(density, minDensity, maxDensity);
+        }
+
+        grid.SetPixels(currentPixels);
+        grid.Apply();
+    }
+
+    void EdgeErosion()
+    {
+        if (MainVoxelGrid == null || MainVoxelGrid.mainGrid == null) return;
+
+        Texture3D grid = MainVoxelGrid.mainGrid;
+        Vector3Int res = MainVoxelGrid.resolution;
+        float dt = Time.deltaTime;
+
+        if (lastFramePixels == null || lastFramePixels.Length != currentPixels.Length)
+            lastFramePixels = new Color[currentPixels.Length];
+        System.Array.Copy(currentPixels, lastFramePixels, currentPixels.Length);
+
+        Vector3Int[] directions = new Vector3Int[] {
+            new Vector3Int(1, 0, 0), new Vector3Int(-1, 0, 0),
+            new Vector3Int(0, 1, 0), new Vector3Int(0, -1, 0),
+            new Vector3Int(0, 0, 1), new Vector3Int(0, 0, -1)
+        };
+
+        for (int z = 0; z < res.z; z++)
+        {
+            for (int y = 0; y < res.y; y++)
+            {
+                for (int x = 0; x < res.x; x++)
+                {
+                    int i = x + y * res.x + z * res.y * res.x;
+
+                    if (_collisionMask[i])
+                    {
+                        currentPixels[i] = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+                        continue;
+                    }
+
+                    float density = lastFramePixels[i].r;
+
+                    if (density > densityThreshold)
+                    {
+                        int emptyNeighbors = 0;
+
+                        foreach (Vector3Int dir in directions)
+                        {
+                            int nx = x + dir.x;
+                            int ny = y + dir.y;
+                            int nz = z + dir.z;
+
+                            if (nx >= 0 && nx < res.x && ny >= 0 && ny < res.y && nz >= 0 && nz < res.z)
+                            {
+                                int nIdx = nx + ny * res.x + nz * res.y * res.x;
+
+                                if (_collisionMask[nIdx] || lastFramePixels[nIdx].r < 0.05f)
+                                {
+                                    emptyNeighbors++;
+                                }
+                            }
+                            else
+                            {
+                                emptyNeighbors++;
+                            }
+                        }
+
+                        float globalDecay = Random.Range(minDensityDelta, maxDensityDelta) * 0.1f;
+
+                        float erosionDecay = emptyNeighbors * minDensityDelta * 0.4f;
+
+                        density += (globalDecay + erosionDecay) * dt;
+                    }
+
+                    currentPixels[i].r = Mathf.Clamp(density, minDensity, maxDensity);
+
+                    currentPixels[i].g *= 0.9f;
+                    currentPixels[i].b *= 0.9f;
+                    currentPixels[i].a *= 0.9f;
+                }
+            }
         }
 
         grid.SetPixels(currentPixels);

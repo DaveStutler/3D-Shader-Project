@@ -93,6 +93,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerShooter
   bulletPrefab: {fileID: 7343088175155651089, guid: 01eb4e0dc481cf74693cb1b16bfef616, type: 3}
+  grenadePrefab: {fileID: 7343088175155651089, guid: a683e562b07cd7a45aaa1942d4aa6608, type: 3}
+  smokeGrenadePrefab: {fileID: 8514309951497047009, guid: d33b690c1d663d04aa956737610fb78d, type: 3}
+  firePoint: {fileID: 0}
   shootForce: 30
 --- !u!1 &5506589467394924514
 GameObject:

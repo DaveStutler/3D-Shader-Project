@@ -74,12 +74,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SmokeUpdater
   densityThreshold: 0.0001
-  minDensityDelta: -0.3
+  minDensityDelta: -5
   maxDensityDelta: 0
   minDensity: 0
   maxDensity: 20
   smokeDuration: 10
-  growStageDuration: 3
+  growStageDuration: 4
   maxCloudRadius: 10
   localGrowthRatio: 0.1
   MainVoxelGrid: {fileID: 5393161750105029590}
@@ -150,6 +150,7 @@ MonoBehaviour:
   smokeUpdater: {fileID: 3766462762712591354}
   smokeGrid: {fileID: 7310955639063347523}
   showDebug: 1
+  debugMode: 1
   sliceAxis: 1
   sliceIndex: 5
   maxVisualDensity: 5
