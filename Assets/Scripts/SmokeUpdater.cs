@@ -325,10 +325,12 @@ public class SmokeUpdater : MonoBehaviour
                         float dist = Vector3.Distance(new Vector3(x, y, z), new Vector3(centerX, centerY, centerZ));
                         if (dist <= radius)
                         {
-                            float falloff = 1.0f - (dist / radius);
-                            currentPixels[i].g += velocityForce.x * falloff * Time.deltaTime;
-                            currentPixels[i].b += velocityForce.y * falloff * Time.deltaTime;
-                            currentPixels[i].a += velocityForce.z * falloff * Time.deltaTime;
+                            // float falloff = 1.0f - (dist / radius);
+                            // currentPixels[i].g += velocityForce.x * falloff * Time.deltaTime;
+                            // currentPixels[i].b += velocityForce.y * falloff * Time.deltaTime;
+                            // currentPixels[i].a += velocityForce.z * falloff * Time.deltaTime;
+
+                            currentPixels[i].r = dist / radius;
                         }
                     }
                 }
