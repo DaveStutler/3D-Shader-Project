@@ -52,7 +52,7 @@ public class SmokeGrid : MonoBehaviour
 
         _smokeupdater.CollisionVoxelGrid = collisionMasker.GetCollisionVoxel();
 
-        GenerateSampleFloodFill();
+        GenerateDirectionalFloodFill();
 
         _smokeupdater.InitializePixels();
 
@@ -283,6 +283,132 @@ public class SmokeGrid : MonoBehaviour
         {
             int idx = voxel.x + voxel.y * resX + voxel.z * resY * resX;
             float voxelCost = CalculateCost(voxel);
+
+            float mask = Mathf.Clamp01(1.0f - (voxelCost / (maxCostReached + Mathf.Epsilon)));
+            mask = Mathf.SmoothStep(0, 1, mask);
+
+            Vector3 pos = mainVoxelGrid.GetGridPosition(voxel.x, voxel.y, voxel.z);
+            float px = pos.x * noiseScale;
+            float py = pos.y * noiseScale;
+            float pz = pos.z * noiseScale;
+
+            float noiseValue = Mathf.PerlinNoise(px, py) * Mathf.PerlinNoise(py, pz);
+            float finalDensity = noiseValue * mask * densityMulptiplier;
+
+            colors[idx] = new Color(finalDensity, voxelCost, maxCostReached, 0f);
+        }
+
+        mainVoxelGrid.mainGrid.SetPixels(colors);
+        mainVoxelGrid.mainGrid.Apply();
+    }
+
+    public void GenerateDirectionalFloodFill(float noiseScale = 0.2f)
+    {
+        int resX = (int)mainVoxelGrid.resolution.x;
+        int resY = (int)mainVoxelGrid.resolution.y;
+        int resZ = (int)mainVoxelGrid.resolution.z;
+
+        Vector3Int emissionCenter = new Vector3Int(resX / 2, resY / 2, resZ / 2);
+
+        int totalVoxels = resX * resY * resZ;
+        int maxVoxels = (int)(voxelFillPercentage * totalVoxels);
+
+        Color[] colors = new Color[totalVoxels];
+        Color[] collisionData = _smokeupdater.CollisionVoxelGrid.mainGrid.GetPixels();
+
+        float[] bestCosts = new float[totalVoxels];
+        bool[] visited = new bool[totalVoxels];
+
+        for (int i = 0; i < totalVoxels; i++)
+        {
+            bestCosts[i] = float.MaxValue;
+        }
+
+        MinHeapQueue<Vector3Int, float> frontier = new MinHeapQueue<Vector3Int, float>();
+
+        if (emissionCenter.x < 0 || emissionCenter.x >= resX ||
+            emissionCenter.y < 0 || emissionCenter.y >= resY ||
+            emissionCenter.z < 0 || emissionCenter.z >= resZ) return;
+
+        float GetDirectionalCost(Vector3Int dir, float currentCost)
+        {
+            float weightX = 2.5f;
+            float weightZ = 2.5f;
+
+            float weightY = 1.0f;
+            if (dir.y > 0) weightY = 4.0f;      
+            else if (dir.y < 0) weightY = 0.1f; 
+
+            float costX = dir.x * dir.x * weightX;
+            float costY = dir.y * dir.y * weightY;
+            float costZ = dir.z * dir.z * weightZ;
+
+            return Mathf.Sqrt(costX + costY + costZ);
+        }
+
+        int startIdx = emissionCenter.x + emissionCenter.y * resX + emissionCenter.z * resY * resX;
+        bestCosts[startIdx] = 0f;
+        frontier.Enqueue(emissionCenter, 0f);
+
+        List<Vector3Int> validVoxels = new List<Vector3Int>(maxVoxels);
+        float maxCostReached = 0f;
+
+        List<Vector3Int> dirs = new List<Vector3Int>();
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                for (int z = -1; z <= 1; z++)
+                {
+                    if (x == 0 && y == 0 && z == 0) continue;
+                    dirs.Add(new Vector3Int(x, y, z));
+                }
+            }
+        }
+        Vector3Int[] directions = dirs.ToArray();
+
+        while (frontier.Count > 0 && validVoxels.Count < maxVoxels)
+        {
+            Vector3Int current = frontier.Dequeue();
+            int currentIdx = current.x + current.y * resX + current.z * resY * resX;
+
+            if (visited[currentIdx]) continue;
+
+            visited[currentIdx] = true;
+            validVoxels.Add(current);
+
+            float currentCost = bestCosts[currentIdx];
+            if (currentCost > maxCostReached) maxCostReached = currentCost;
+
+            foreach (Vector3Int dir in directions)
+            {
+                Vector3Int neighbor = current + dir;
+
+                if (neighbor.x >= 0 && neighbor.x < resX &&
+                    neighbor.y >= 0 && neighbor.y < resY &&
+                    neighbor.z >= 0 && neighbor.z < resZ)
+                {
+                    int neighborIdx = neighbor.x + neighbor.y * resX + neighbor.z * resY * resX;
+
+                    if (visited[neighborIdx]) continue;
+                    if (collisionData[neighborIdx].r > 0.1f) continue;
+
+                    float edgeCost = GetDirectionalCost(dir, currentCost);
+                    float newCost = currentCost + edgeCost;
+
+                    if (newCost < bestCosts[neighborIdx])
+                    {
+                        bestCosts[neighborIdx] = newCost;
+                        frontier.Enqueue(neighbor, newCost);
+                    }
+                }
+            }
+        }
+
+        foreach (Vector3Int voxel in validVoxels)
+        {
+            int idx = voxel.x + voxel.y * resX + voxel.z * resY * resX;
+            float voxelCost = bestCosts[idx]; 
 
             float mask = Mathf.Clamp01(1.0f - (voxelCost / (maxCostReached + Mathf.Epsilon)));
             mask = Mathf.SmoothStep(0, 1, mask);

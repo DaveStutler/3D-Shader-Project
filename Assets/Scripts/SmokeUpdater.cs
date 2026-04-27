@@ -92,24 +92,22 @@ public class SmokeUpdater : MonoBehaviour
                     voxelDistances[i] = initialPixels[i].g;
                     dynamicMaxCost = Mathf.Max(dynamicMaxCost, initialPixels[i].b);
 
-                    initialPixels[i].g = 0f;
-                    initialPixels[i].b = 0f;
-                    initialPixels[i].a = 0f;
-
                     if (growStageDuration <= 0f)
                     {
-                        currentPixels[i] = initialPixels[i];
+                        currentPixels[i].r = initialPixels[i].r;
                     }
                     else
                     {
-                        currentPixels[i] = new Color(minDensity, 0f, 0f, 0f);
+                        currentPixels[i].r = minDensity;
                     }
-                    currentPixels[i].g = initialPixels[i].g;
-                    currentPixels[i].b = initialPixels[i].b;
-                    currentPixels[i].a = initialPixels[i].a;
 
-                    Vector3 pos = MainVoxelGrid.GetGridPosition(x, y, z);
-                    voxelDistances[i] = Vector3.Distance(pos, centerPos);
+                    currentPixels[i].g = 0f;
+                    currentPixels[i].b = 0f;
+                    currentPixels[i].a = 0f;
+
+                    initialPixels[i].g = 0f;
+                    initialPixels[i].b = 0f;
+                    initialPixels[i].a = 0f;
                 }
             }
         }
@@ -259,18 +257,12 @@ public class SmokeUpdater : MonoBehaviour
 
                     if (density < initialDensity && voxelDistances[i] <= currentWaveRadius)
                     {
-                        bool canReach = HasLineOfSight(
-                            _originVoxelX, _originVoxelY, _originVoxelZ, x, y, z);
-
-                        if (canReach)
+                        if (localDuration <= 0f)
+                            density = initialDensity;
+                        else
                         {
-                            if (localDuration <= 0f)
-                                density = initialDensity;
-                            else
-                            {
-                                float localGrowRate = initialDensity / localDuration;
-                                density += localGrowRate * Time.deltaTime;
-                            }
+                            float localGrowRate = initialDensity / localDuration;
+                            density += localGrowRate * Time.deltaTime;
                         }
                     }
 
@@ -291,6 +283,18 @@ public class SmokeUpdater : MonoBehaviour
     public Color getCurrentDensity(int idx)
     {
         return currentPixels[idx];
+    }
+
+    public float GetVoxelDistance(int idx)
+    {
+        if (voxelDistances != null && idx >= 0 && idx < voxelDistances.Length)
+            return voxelDistances[idx];
+        return 0f;
+    }
+
+    public float GetDynamicMaxCost()
+    {
+        return dynamicMaxCost;
     }
 
     public void AddVelocityAtWorldPos(Vector3 worldPos, Vector3 velocityForce, float radius)

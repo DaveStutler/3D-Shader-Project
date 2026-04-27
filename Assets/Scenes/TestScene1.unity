@@ -258,13 +258,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: SmokeGrid (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 3475284812560810114, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: maxCloudRadius
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: growStageDuration
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -340,7 +344,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: voxelFillPercentage
-      value: 0.2
+      value: 0.05
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -359,13 +363,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: SmokeGrid (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3475284812560810114, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: maxCloudRadius
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: growStageDuration
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -437,7 +445,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: voxelFillPercentage
-      value: 0.2
+      value: 0.05
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -623,9 +631,29 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: -5477749408508380018, guid: 09817c8d30559614eb43263688f85b04, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 194.6
+      objectReference: {fileID: 0}
+    - target: {fileID: -3542852092398272455, guid: 09817c8d30559614eb43263688f85b04, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 194.6
+      objectReference: {fileID: 0}
+    - target: {fileID: -2484921068739079471, guid: 09817c8d30559614eb43263688f85b04, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: -2093772787462966335, guid: 09817c8d30559614eb43263688f85b04, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 194.6
+      objectReference: {fileID: 0}
     - target: {fileID: -1599826595754709761, guid: 09817c8d30559614eb43263688f85b04, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -1255605710908113952, guid: 09817c8d30559614eb43263688f85b04, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 194.6
       objectReference: {fileID: 0}
     - target: {fileID: -516098083770646512, guid: 09817c8d30559614eb43263688f85b04, type: 3}
       propertyPath: m_Layer
@@ -642,6 +670,18 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 09817c8d30559614eb43263688f85b04, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4083501151425157549, guid: 09817c8d30559614eb43263688f85b04, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 194.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4306643203051859313, guid: 09817c8d30559614eb43263688f85b04, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 194.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4865064391339405807, guid: 09817c8d30559614eb43263688f85b04, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 194.6
       objectReference: {fileID: 0}
     - target: {fileID: 8416272007918961125, guid: 09817c8d30559614eb43263688f85b04, type: 3}
       propertyPath: m_Layer
@@ -851,7 +891,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3766462762712591354, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: growStageDuration
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -859,11 +899,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.484
+      value: 2.22
       objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.43
+      value: -0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3787044014051382812, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -895,11 +935,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4460718124439866875, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: CollisionResoltion
-      value: 32
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 4464288979215544310, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5393161750105029590, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
+      propertyPath: resolution.x
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 5393161750105029590, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
+      propertyPath: resolution.y
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 5393161750105029590, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
+      propertyPath: resolution.z
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 7269143942438258485, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: m_Enabled
@@ -927,7 +979,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7310955639063347523, guid: 07bc81a8258a1f841941f3de87b6908b, type: 3}
       propertyPath: voxelFillPercentage
-      value: 0.2
+      value: 0.05
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
